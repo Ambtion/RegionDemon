@@ -7,91 +7,105 @@
 //
 
 #import "RootViewController.h"
-#import "ModelController.h"
-#import "DataViewController.h"
+#import <MapKit/MapKit.h>
 
-@interface RootViewController ()
-
-@property (readonly, strong, nonatomic) ModelController *modelController;
+@interface RootViewController ()<CLLocationManagerDelegate>
+@property(nonatomic,strong)CLLocationManager * locationManager;
 @end
 
 @implementation RootViewController
 
-@synthesize modelController = _modelController;
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    // Configure the page view controller and add it as a child view controller.
-    self.pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
-    self.pageViewController.delegate = self;
-
-    DataViewController *startingViewController = [self.modelController viewControllerAtIndex:0 storyboard:self.storyboard];
-    NSArray *viewControllers = @[startingViewController];
-    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
-
-    self.pageViewController.dataSource = self.modelController;
-
-    [self addChildViewController:self.pageViewController];
-    [self.view addSubview:self.pageViewController.view];
-
-    // Set the page view controller's bounds using an inset rect so that self's view is visible around the edges of the pages.
-    CGRect pageViewRect = self.view.bounds;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        pageViewRect = CGRectInset(pageViewRect, 40.0, 40.0);
-    }
-    self.pageViewController.view.frame = pageViewRect;
-
-    [self.pageViewController didMoveToParentViewController:self];
-
-    // Add the page view controller's gesture recognizers to the book view controller's view so that the gestures are started more easily.
-    self.view.gestureRecognizers = self.pageViewController.gestureRecognizers;
+    [self startLocation];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)startLocation
+{
+    if (!_locationManager) {
+        // 1. 实例化定位管理器
+        _locationManager = [[CLLocationManager alloc] init];
+        // 2. 设置代理
+        _locationManager.delegate = self;
+        // 3. 定位精度
+        [_locationManager setDesiredAccuracy:kCLLocationAccuracyBest];
+        // 4.请求用户权限：分为：⓵只在前台开启定位⓶在后台也可定位，
+        //注意：建议只请求⓵和⓶中的一个，如果两个权限都需要，只请求⓶即可，
+        //⓵⓶这样的顺序，将导致bug：第一次启动程序后，系统将只请求⓵的权限，⓶的权限系统不会请求，只会在下一次启动应用时请求⓶
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8) {
+            //[_locationManager requestWhenInUseAuthorization];//⓵只在前台开启定位
+            [_locationManager requestAlwaysAuthorization];//⓶在后台也可定位
+        }
+        // 5.iOS9新特性：将允许出现这种场景：同一app中多个location manager：一些只能在前台定位，另一些可在后台定位（并可随时禁止其后台定位）。
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9) {
+            _locationManager.allowsBackgroundLocationUpdates = YES;
+        }
+    }
+    
+    // 6. 更新用户位置
+    [_locationManager startUpdatingLocation];
+    
+    
+    CLLocationCoordinate2D companyCenter;
+    
+    companyCenter.latitude = 23.126272;
+    
+    companyCenter.longitude = 113.395568;
+    
+    
+    CLRegion* fkit = [[CLCircularRegion alloc] initWithCenter:companyCenter
+                                                       radius:500 identifier:@"fkit"];
+    [self.locationManager startMonitoringForRegion:fkit];
 }
 
-- (ModelController *)modelController {
-    // Return the model controller object, creating it if necessary.
-    // In more complex implementations, the model controller may be passed to the view controller.
-    if (!_modelController) {
-        _modelController = [[ModelController alloc] init];
-    }
-    return _modelController;
+- (void)locationManager:(CLLocationManager *)manager
+     didUpdateLocations:(NSArray<CLLocation *> *)locations
+{
+    
 }
 
-#pragma mark - UIPageViewController delegate methods
-
-- (UIPageViewControllerSpineLocation)pageViewController:(UIPageViewController *)pageViewController spineLocationForInterfaceOrientation:(UIInterfaceOrientation)orientation {
-    if (UIInterfaceOrientationIsPortrait(orientation) || ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)) {
-        // In portrait orientation or on iPhone: Set the spine position to "min" and the page view controller's view controllers array to contain just one view controller. Setting the spine position to 'UIPageViewControllerSpineLocationMid' in landscape orientation sets the doubleSided property to YES, so set it to NO here.
-        
-        UIViewController *currentViewController = self.pageViewController.viewControllers[0];
-        NSArray *viewControllers = @[currentViewController];
-        [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
-        
-        self.pageViewController.doubleSided = NO;
-        return UIPageViewControllerSpineLocationMin;
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    switch (status) {
+        case kCLAuthorizationStatusNotDetermined:
+            if ([_locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
+            {
+                [_locationManager requestWhenInUseAuthorization];
+            }
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >=9){
+                _locationManager.allowsBackgroundLocationUpdates = YES;
+            }
+            break;
+        case kCLAuthorizationStatusDenied:
+        {
+            
+        }
+        default:
+            break;
     }
-
-    // In landscape orientation: Set set the spine location to "mid" and the page view controller's view controllers array to contain two view controllers. If the current page is even, set it to contain the current and next view controllers; if it is odd, set the array to contain the previous and current view controllers.
-    DataViewController *currentViewController = self.pageViewController.viewControllers[0];
-    NSArray *viewControllers = nil;
-
-    NSUInteger indexOfCurrentViewController = [self.modelController indexOfViewController:currentViewController];
-    if (indexOfCurrentViewController == 0 || indexOfCurrentViewController % 2 == 0) {
-        UIViewController *nextViewController = [self.modelController pageViewController:self.pageViewController viewControllerAfterViewController:currentViewController];
-        viewControllers = @[currentViewController, nextViewController];
-    } else {
-        UIViewController *previousViewController = [self.modelController pageViewController:self.pageViewController viewControllerBeforeViewController:currentViewController];
-        viewControllers = @[previousViewController, currentViewController];
-    }
-    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
-
-
-    return UIPageViewControllerSpineLocationMid;
 }
 
+#pragma mark GEOFence
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    NSLog(@"Error : %@",error);
+}
+
+- (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error
+{
+    NSLog(@"Region monitoring failed with error: %@", [error localizedDescription]);
+}
+
+- (void)locationManager:(CLLocationManager *)manager didExitRegion:(nonnull CLRegion *)region
+{
+    NSLog(@"Entered Region - %@", region.identifier);
+}
+
+- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(nonnull CLRegion *)region
+{
+    NSLog(@"Entered Enter Region - %@", region.identifier);
+}
+
+- (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
+    NSLog(@"Started monitoring %@ region", region.identifier);
+}
 @end
