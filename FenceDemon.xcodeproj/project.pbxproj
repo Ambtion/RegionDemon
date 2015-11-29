@@ -12,6 +12,9 @@
 		B8190C061C0B41D800CFF4A5 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8190C051C0B41D800CFF4A5 /* RootViewController.m */; };
 		B8190C111C0B41D800CFF4A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8190C101C0B41D800CFF4A5 /* Assets.xcassets */; };
 		B8190C1C1C0B433C00CFF4A5 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B8190C1B1C0B433C00CFF4A5 /* Default-568h@2x.png */; };
+		B8190C201C0B4A9700CFF4A5 /* Beijing, China.gpx in Resources */ = {isa = PBXBuildFile; fileRef = B8190C1D1C0B4A9700CFF4A5 /* Beijing, China.gpx */; };
+		B8190C211C0B4A9700CFF4A5 /* Nanjing, China.gpx in Resources */ = {isa = PBXBuildFile; fileRef = B8190C1E1C0B4A9700CFF4A5 /* Nanjing, China.gpx */; };
+		B8190C221C0B4A9700CFF4A5 /* Shenzhen, China.gpx in Resources */ = {isa = PBXBuildFile; fileRef = B8190C1F1C0B4A9700CFF4A5 /* Shenzhen, China.gpx */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +27,9 @@
 		B8190C101C0B41D800CFF4A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B8190C151C0B41D800CFF4A5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B8190C1B1C0B433C00CFF4A5 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		B8190C1D1C0B4A9700CFF4A5 /* Beijing, China.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Beijing, China.gpx"; sourceTree = "<group>"; };
+		B8190C1E1C0B4A9700CFF4A5 /* Nanjing, China.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Nanjing, China.gpx"; sourceTree = "<group>"; };
+		B8190C1F1C0B4A9700CFF4A5 /* Shenzhen, China.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Shenzhen, China.gpx"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +46,9 @@
 		B8190BF21C0B41D800CFF4A5 = {
 			isa = PBXGroup;
 			children = (
+				B8190C1D1C0B4A9700CFF4A5 /* Beijing, China.gpx */,
+				B8190C1E1C0B4A9700CFF4A5 /* Nanjing, China.gpx */,
+				B8190C1F1C0B4A9700CFF4A5 /* Shenzhen, China.gpx */,
 				B8190C1B1C0B433C00CFF4A5 /* Default-568h@2x.png */,
 				B8190BFD1C0B41D800CFF4A5 /* FenceDemon */,
 				B8190BFC1C0B41D800CFF4A5 /* Products */,
@@ -138,8 +147,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B8190C201C0B4A9700CFF4A5 /* Beijing, China.gpx in Resources */,
 				B8190C111C0B41D800CFF4A5 /* Assets.xcassets in Resources */,
 				B8190C1C1C0B433C00CFF4A5 /* Default-568h@2x.png in Resources */,
+				B8190C221C0B4A9700CFF4A5 /* Shenzhen, China.gpx in Resources */,
+				B8190C211C0B4A9700CFF4A5 /* Nanjing, China.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,7 +257,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = FenceDemon/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon;
+				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -256,7 +268,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = FenceDemon/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon;
+				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
