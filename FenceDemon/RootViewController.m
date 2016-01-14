@@ -7,147 +7,51 @@
 //
 
 #import "RootViewController.h"
-#import <MapKit/MapKit.h>
 
-@interface RootViewController ()<CLLocationManagerDelegate,UITableViewDataSource,UITableViewDelegate>
-@property(nonatomic,strong)CLLocationManager * locationManager;
-@property(nonatomic,strong)UITableView * tableView;
-@property(nonatomic,strong)CLLocation * curlocation;
-@property(nonatomic,strong)NSMutableArray * fences;
+@interface RootViewController ()
 @end
 
 @implementation RootViewController
-
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    self.fences = [NSMutableArray arrayWithCapacity:0];
-    [self startLocation];
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"添加" style:UIBarButtonItemStylePlain target:self action:@selector(addFecnes)];
-    
-    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    [self.view addSubview:self.tableView];
-    
-    
+    self.view.backgroundColor = [UIColor whiteColor];
+    UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = CGRectMake(100, 100, 100, 40);
+    [button addTarget:self action:@selector(buttoonCLick:) forControlEvents:UIControlEventTouchUpInside];
+    button.backgroundColor = [UIColor redColor];
+    [self.view addSubview:button];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (void)buttoonCLick:(UIButton *)button
 {
-    return self.fences.count;
+    [self postLocalNotificationWithMsg:@"Heloo"];
 }
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)postLocalNotificationWithMsg:(NSString *)msg
 {
-    UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"CELL"];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CELL"];
-    }
-    CLRegion * region = [[self fences] objectAtIndex:indexPath.row];
     
-    cell.textLabel.text = [NSString stringWithFormat:@"la:%f , lo:%f",region.center.latitude,region.center.longitude];
-    return cell;
-    
-}
-
-- (void)startLocation
-{
-    if (!_locationManager) {
-
-        _locationManager = [[CLLocationManager alloc] init];
-
-        _locationManager.delegate = self;
-
-        [_locationManager setDesiredAccuracy:kCLLocationAccuracyBest];
+    // 初始化本地通知对象
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    if (notification) {
+        // 设置通知的提醒时间
+        notification.timeZone = [NSTimeZone defaultTimeZone]; // 使用本地时区
+        notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:3];
         
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8) {
-            [self.locationManager requestWhenInUseAuthorization]; //
-        }
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9) {
-            _locationManager.allowsBackgroundLocationUpdates = YES;
-        }
-        [_locationManager requestWhenInUseAuthorization];
-    }
-    [_locationManager startUpdatingLocation];
-    
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations
-{
-    if (locations.count) {
-        self.curlocation =[locations firstObject];
+        // 设置重复间隔
+        notification.repeatInterval = kCFCalendarUnitDay;
+        // 设置提醒的文字内容
+        notification.alertBody   = msg;
+        notification.soundName = UILocalNotificationDefaultSoundName;
+        // 设置应用程序右上角的提醒个数
+        notification.applicationIconBadgeNumber++;
+        
+        // 设定通知的userInfo，用来标识该通知
+        NSMutableDictionary *aUserInfo = [[NSMutableDictionary alloc] init];
+        notification.userInfo = aUserInfo;
+        
+        // 将通知添加到系统中
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    switch (status) {
-        case kCLAuthorizationStatusNotDetermined:
-        if ([_locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-            [_locationManager requestWhenInUseAuthorization];
-        }
-        break;
-        default:
-        break;
-    }
-}
-
-#pragma mark GEOFence
-- (void)addFecnes
-{
-    
-    CLLocationCoordinate2D companyCenter;
-    
-    if (self.curlocation) {
-        companyCenter.latitude = self.curlocation.coordinate.latitude;
-        companyCenter.longitude = self.curlocation.coordinate.longitude;
-    }else{
-        companyCenter.latitude = 23.126272;
-        companyCenter.longitude = 113.395568;
-    }
-  
-    CLRegion* fkit = [[CLCircularRegion alloc] initWithCenter:companyCenter
-                                                       radius:100 identifier:@"fkit"];
-    
-//    for (NSSet * fk in self.monitoredRegions) {
-//        [self.locationManager stopMonitoringForRegion:fk];
-//        [self.fences addObject:fkit];
-//    }
-    NSSet * set = self.locationManager.monitoredRegions;
-    [set enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self.locationManager stopMonitoringForRegion:obj];
-    }];
-    
-    NSLog(@"%@",self.locationManager.monitoredRegions);
-    NSLog(@"%f",self.locationManager.maximumRegionMonitoringDistance);
-    NSLog(@"%@",fkit);
-    [self.locationManager startMonitoringForRegion:fkit];
-    [self.fences removeAllObjects];
-    [self.fences addObject:fkit];
-//    [self.locationManager requestStateForRegion:fkit];
-    [self.tableView reloadData];
-}
-
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    NSLog(@"Error : %@",error);
-}
-
-- (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error
-{
-    NSLog(@"Region monitoring failed with error: %@", [error localizedDescription]);
-}
-
-- (void)locationManager:(CLLocationManager *)manager didExitRegion:(nonnull CLRegion *)region
-{
-    NSLog(@"Entered Region - %@", region.identifier);
-}
-
-- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(nonnull CLRegion *)region
-{
-    NSLog(@"Entered Enter Region - %@", region.identifier);
-}
-
-- (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
-    NSLog(@"Started monitoring %@ region", region.identifier);
-}
 @end
