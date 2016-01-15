@@ -23,10 +23,7 @@
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[[RootViewController alloc] init]];
     [self.window makeKeyAndVisible];
     
-    [[UIApplication sharedApplication]registerForRemoteNotificationTypes:
-     UIRemoteNotificationTypeBadge |
-     UIRemoteNotificationTypeAlert |
-     UIRemoteNotificationTypeSound];
+   [[UIApplication sharedApplication]registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound  categories:nil]];
     
     [self startLocation];
     return YES;
@@ -98,17 +95,57 @@
         companyCenter.latitude = self.curlocation.coordinate.latitude;
         companyCenter.longitude = self.curlocation.coordinate.longitude;
     }
-    CLRegion* fkit = [[CLCircularRegion alloc] initWithCenter:companyCenter
-                                                       radius:30 identifier:@"fkit"];
     
-    NSSet * set = self.locationManager.monitoredRegions;
-    [set enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [self.locationManager stopMonitoringForRegion:obj];
-    }];
-    
-    [self.locationManager startMonitoringForRegion:fkit];
+    CLRegion *region = [[CLRegion alloc] initCircularRegionWithCenter:self.curlocation.coordinate radius:30.f identifier:@"fences"];
+    [self startMonitoringForRegion:region];
 }
 
+- (void)startMonitoringForRegion:(CLRegion *)region
+{
+    
+    NSMutableArray *regions = [[NSMutableArray alloc] initWithCapacity:0];
+    for (CLRegion *monitored in [self.locationManager monitoredRegions])
+    {
+        [self.locationManager stopMonitoringForRegion:monitored];
+        [regions addObject:monitored];
+    }
+    [regions addObject:region];
+    
+    if([CLLocationManager regionMonitoringEnabled])
+    {
+        for (CLRegion *region in regions)
+        {
+            [self.locationManager startMonitoringForRegion:region];
+        }
+    }else
+    {
+       
+    }
+}
+
+- (void)startMonitoringForRegions:(NSArray *)regions
+{
+
+    for (CLRegion *monitored in [self.locationManager monitoredRegions])
+    {
+        [self.locationManager stopMonitoringForRegion:monitored];
+    }
+    
+    if([CLLocationManager regionMonitoringEnabled])
+    {
+        for (CLRegion *region in regions)
+        {
+            [self.locationManager startMonitoringForRegion:region];
+        }
+    }else
+    {
+        
+        //#ifdef _DEBUG
+        //        NSString *sencondLog = [NSString stringWithFormat:@"This app requires region monitoring features which are unavailable on this device"];
+        //        saveLogToDevice(sencondLog)
+        //#endif
+    }
+}
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     [self postLocalNotificationWithMsg:@"didFailWithError"];
