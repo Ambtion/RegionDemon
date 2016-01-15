@@ -265,7 +265,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "41bfb484-33bd-4d12-b6be-b4f3b8ef8078";
+				PROVISIONING_PROFILE = "fb429e20-06ad-4f2b-9460-b1bbe7edce3b";
 			};
 			name = Debug;
 		};
@@ -279,7 +279,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "41bfb484-33bd-4d12-b6be-b4f3b8ef8078";
+				PROVISIONING_PROFILE = "fb429e20-06ad-4f2b-9460-b1bbe7edce3b";
 			};
 			name = Release;
 		};
