@@ -8,10 +8,8 @@
 
 #import "AppDelegate.h"
 #import "RootViewController.h"
-#import <MapKit/MapKit.h>
 
 @interface AppDelegate ()<CLLocationManagerDelegate>
-@property(nonatomic,strong)CLLocationManager * locationManager;
 @property(nonatomic,strong)CLLocation * curlocation;
 @end
 
@@ -24,7 +22,7 @@
     [self.window makeKeyAndVisible];
     
    [[UIApplication sharedApplication]registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound  categories:nil]];
-    
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     [self startLocation];
     return YES;
 }
@@ -183,7 +181,7 @@
         notification.repeatInterval = kCFCalendarUnitDay;
         notification.alertBody   = msg;
         notification.soundName = UILocalNotificationDefaultSoundName;
-        notification.applicationIconBadgeNumber++;
+//        notification.applicationIconBadgeNumber++;
         NSMutableDictionary *aUserInfo = [[NSMutableDictionary alloc] init];
         aUserInfo[@"Msg"] = msg;
         notification.userInfo = aUserInfo;
