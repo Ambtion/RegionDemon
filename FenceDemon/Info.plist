@@ -24,10 +24,10 @@
 	<true/>
 	<key>NSLocation</key>
 	<string></string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>使用时候定位</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string></string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>使用时候定位</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

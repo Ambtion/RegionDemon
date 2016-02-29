@@ -263,7 +263,7 @@
 				INFOPLIST_FILE = FenceDemon/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon1;
+				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "fb429e20-06ad-4f2b-9460-b1bbe7edce3b";
 			};
@@ -277,7 +277,7 @@
 				INFOPLIST_FILE = FenceDemon/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon1;
+				PRODUCT_BUNDLE_IDENTIFIER = FenceDemon.FenceDemon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "fb429e20-06ad-4f2b-9460-b1bbe7edce3b";
 			};

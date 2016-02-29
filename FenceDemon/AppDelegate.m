@@ -20,8 +20,8 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[[RootViewController alloc] init]];
     [self.window makeKeyAndVisible];
-    
-   [[UIApplication sharedApplication]registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound  categories:nil]];
+    [self postLocalNotificationWithMsg:@"didFinishLaunchingWithOptions"];
+    [[UIApplication sharedApplication]registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound  categories:nil]];
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     [self startLocation];
     return YES;
@@ -56,7 +56,7 @@
             _locationManager.allowsBackgroundLocationUpdates = YES;
         }
     }
-    [_locationManager startUpdatingLocation];
+    [_locationManager startMonitoringSignificantLocationChanges];
     
 }
 
@@ -117,13 +117,13 @@
         }
     }else
     {
-       
+        
     }
 }
 
 - (void)startMonitoringForRegions:(NSArray *)regions
 {
-
+    
     for (CLRegion *monitored in [self.locationManager monitoredRegions])
     {
         [self.locationManager stopMonitoringForRegion:monitored];
@@ -135,8 +135,7 @@
         {
             [self.locationManager startMonitoringForRegion:region];
         }
-    }else
-    {
+    }else{
         
         //#ifdef _DEBUG
         //        NSString *sencondLog = [NSString stringWithFormat:@"This app requires region monitoring features which are unavailable on this device"];
@@ -152,7 +151,7 @@
 - (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error
 {
     [self postLocalNotificationWithMsg:@"monitoringDidFailForRegion"];
-
+    
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(nonnull CLRegion *)region
@@ -163,7 +162,7 @@
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(nonnull CLRegion *)region
 {
     [self postLocalNotificationWithMsg:@"didEnterRegion"];
-
+    
 }
 
 - (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
@@ -174,14 +173,14 @@
 {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     if (notification) {
-
+        
         notification.timeZone = [NSTimeZone defaultTimeZone]; // 使用本地时区
         notification.fireDate = [NSDate date];
         
         notification.repeatInterval = kCFCalendarUnitDay;
         notification.alertBody   = msg;
         notification.soundName = UILocalNotificationDefaultSoundName;
-//        notification.applicationIconBadgeNumber++;
+        //        notification.applicationIconBadgeNumber++;
         NSMutableDictionary *aUserInfo = [[NSMutableDictionary alloc] init];
         aUserInfo[@"Msg"] = msg;
         notification.userInfo = aUserInfo;
